@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exemplo de Formatação e Limite de CNPJ</title>
+    <script>
+        function formatarCNPJ(cnpj) {
+            cnpj = cnpj.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+            cnpj = cnpj.replace(/^(\d{2})(\d)/g, '$1.$2'); // Insere o primeiro ponto após os 2 primeiros dígitos
+            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/g, '$1.$2.$3'); // Insere o segundo ponto após os próximos 3 dígitos
+            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/g, '$1.$2.$3/$4'); // Insere a barra após os próximos 3 dígitos
+            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/g, '$1.$2.$3/$4-$5'); // Insere o hífen após os próximos 4 dígitos
+            return cnpj;
+        }
+        
+        function limitarCNPJ(campo) {
+            if (campo.value.length > 18) {
+                campo.value = campo.value.slice(0, 18); // Limita o campo a 18 dígitos
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Formatação e Limite de CNPJ</h1>
+    <label for="cnpj">CNPJ:</label>
+    <input type="text" id="cnpj" oninput="this.value = formatarCNPJ(this.value); limitarCNPJ(this)">
+</body>
+</html>

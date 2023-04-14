@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Solicitar ordem de Serviço</title>
+  <!-- Inclua aqui o link para o arquivo JavaScript do Firebase -->
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Meta tag para tornar a página compatível com smartphones -->
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+    
+  <div class="container mt-5">
+    <h1 class="mb-4">Informações dos Equipamentos Selecionados</h1>
+
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>Descrição</th>
+          <th>ID_Serie</th>
+        </tr>
+      </thead>
+      <tbody id="resultado">
+        <!-- Dados dos equipamentos selecionados serão preenchidos aqui dinamicamente -->
+      </tbody>
+    </table>
+
+    <form id="formulario" class="mt-5">
+                <h2 class="mb-3">Enviar Ordem de Serviço</h2>
+                <div class="form-group">
+                    <label for="nomeSolicitante">Nome do Solicitante</label>
+                    <input type="text" class="form-control" id="nomeSolicitante" required>
+                </div> <br>
+                <div class="form-group">
+                    <h2 class="mb-3">Selecione o Tipo de Relato</h2>
+                    <select id="tipoRelato" onchange="mostrarDivRelato()">
+                        <option value="outros">Outros</option>
+                        <option value="Solicitação Toner">Solicitar Toner</option>
+                        <option value="Papel Atolado">Papel Atolado</option>
+                        <option value="Manchando">Manchando</option>
+                    </select>
+                </div> <br>
+                <div class="form-group" id="relato">
+                    <label for="problemaRelatado">Problema Relatado</label>
+                    <textarea class="form-control" id="problemaRelatado" rows="4" none></textarea>
+                </div> <br>
+                <button type="submit" class="btn btn-primary">Enviar Ordem</button>
+    </form>
+    
+  </div>
+
+    <script> 
+    function mostrarDivRelato() {
+        var tipoRelato = document.getElementById("tipoRelato").value;
+        var divRelato = document.getElementById("relato");
+
+        if (tipoRelato === "outros") {
+            divRelato.style.display = "block";
+        } else {
+            divRelato.style.display = "none";
+        }
+    }
+    </script>
+
+  <script>
+    const firebaseConfig = {
+      aapiKey: "AIzaSyCiafrD-bUZBMvGvZfqRKwA-GRLEtSLBPU",
+      authDomain: "bancorar-82457.firebaseapp.com",
+      databaseURL: "https://bancorar-82457-default-rtdb.firebaseio.com",
+      projectId: "bancorar-82457",
+      storageBucket: "bancorar-82457.appspot.com",
+      messagingSenderId: "198160041951",
+      appId: "1:198160041951:web:55289ecc1a9a544ca7666a",
+      measurementId: "G-N2NBS51NTK",
+    }
+    firebase.initializeApp(firebaseConfig);
+
+    // Função para obter os parâmetros da URL e exibir as informações na tabela
+    function exibirInformacoes() {
+      var queryString = window.location.search;
+      var urlParams = new URLSearchParams(queryString);
+      var equipamentosJson = urlParams.get('equipamentos');
+
+      if (equipamentosJson) {
+        var equipamentosSelecionados = JSON.parse(decodeURIComponent(equipamentosJson));
+
+        var tbody = document.getElementById('resultado');
+
+        for (var i = 0; i < equipamentosSelecionados.length; i++) {
+          var row = document.createElement('tr');
+          var descricaoCell = document.createElement('td');
+          descricaoCell.textContent = equipamentosSelecionados[i].descricao;
+          var idSerieCell = document.createElement('td');
+          idSerieCell.textContent = equipamentosSelecionados[i].idSerie;
+          row.appendChild(descricaoCell);
+          row.appendChild(idSerieCell);
+          tbody.appendChild(row);
+        }
+      } else {
+        alert('Nenhum equipamento selecionado.');
+      }
+    }      // Função para enviar a ordem de serviço para o Firebase
+      function enviarOrdem(event) {
+        event.preventDefault();
+        
+        var urlParams = new URLSearchParams(window.location.search);
+        var empresa = urlParams.get('razaoSocialTitulo');
+
+        var dataHora = new Date().toLocaleString();
+
+
+        var nomeSolicitante = document.getElementById('nomeSolicitante').value;
+        var tipoRelato = document.getElementById('tipoRelato').value;
+        var problemaRelatado = document.getElementById('problemaRelatado').value;
+        var equipamentosSelecionados = [];
+
+        // Obtém os dados dos equipamentos selecionados da tabela
+        var rows = document.getElementById('resultado').getElementsByTagName('tr');
+        for (var i = 0; i < rows.length; i++) {
+          var descricao = rows[i].getElementsByTagName('td')[0].textContent;
+          var idSerie = rows[i].getElementsByTagName('td')[1].textContent;
+          equipamentosSelecionados.push({ descricao: descricao, idSerie: idSerie });
+        }
+
+        // Monta o objeto de ordem de serviço
+        var ordemServico = {
+          nomeSolicitante: nomeSolicitante,
+          empresa: empresa,
+          tipoRelato: tipoRelato,
+          problemaRelatado: problemaRelatado,
+          dataHora:dataHora,
+          equipamentosSelecionados: equipamentosSelecionados
+        };
+
+        // Envia a ordem de serviço para o Firebase
+        firebase.database().ref('ordem').push(ordemServico)
+          .then(function() {
+            alert('Ordem de serviço enviada com sucesso!');
+          })
+          .catch(function(error) {
+            console.error('Erro ao enviar a ordem de serviço:', error);
+          });
+
+        // Limpa o formulário
+        document.getElementById('formulario').reset();
+      }
+
+      // Chama a função para exibir as informações dos equipamentos selecionados
+      exibirInformacoes();
+
+      // Adiciona o evento de submit no formulário
+      document.getElementById('formulario').addEventListener('submit', enviarOrdem);
+    </script>
+</body>
+</html>
