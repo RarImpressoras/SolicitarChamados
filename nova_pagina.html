@@ -137,17 +137,31 @@
           equipamentosSelecionados: equipamentosSelecionados
         };
 
+        var mensagem = "Olá, solicitei um atendimento pelo site:%0A" +
+                        "Empresa: " + ordemServico.empresa + "%0A" +
+                        "Tipo de Relato: " + ordemServico.tipoRelato + "%0A" +
+                        "Problema Relatado: " + ordemServico.problemaRelatado;
+
+                    // Link do WhatsApp com a mensagem formatada e o número de telefone
+                    var linkWhatsapp = "https://wa.me/5511942162164?text=" + mensagem;
+
+                    // Abre o link do WhatsApp em uma nova janela
+
+
         // Envia a ordem de serviço para o Firebase
         firebase.database().ref('ordem').push(ordemServico)
           .then(function() {
-            alert('Ordem de serviço enviada com sucesso!');
+            alert('Já recebemos sua solicitação! Resolveremos o mais breve possivel.');
+            window.open(linkWhatsapp, "_blank");
           })
           .catch(function(error) {
             console.error('Erro ao enviar a ordem de serviço:', error);
           });
 
+
+
         // Limpa o formulário
-        document.getElementById('formulario').reset();
+        document.getElementById('formulario').reset(); 
       }
 
       // Chama a função para exibir as informações dos equipamentos selecionados
