@@ -42,11 +42,37 @@
           <h3 class="mt-3">Solicitar Atendimento Técnico</h3>
         </div>
         <h1 id="nomeFantasiaTitulo"></h1>
-        <input type="text" id="inputCnpj" placeholder="Digite o CNPJ" oninput="this.value = formatarCNPJ(this.value)"
-          maxlength="18" pattern="\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}" inputmode="numeric" autocomplete="off" />
-        <!-- Adicionamos os atributos "maxlength" para limitar a quantidade de caracteres, "pattern" para validar o formato, "inputmode" para informar que é um campo numérico, e "autocomplete" para desabilitar o preenchimento automático do navegador -->
+        
+<input type="radio" id="buscaCNPJ" name="opcaoBusca" value="cnpj" onclick="mostrarInputCNPJ()" checked>
+<label for="buscaCNPJ">Busca por CNPJ</label><br>
+<input type="radio" id="buscaNumeroSerie" name="opcaoBusca" value="numeroSerie" onclick="mostrarInputNumeroSerie()">
+<label for="buscaNumeroSerie">Busca por Número de Série</label><br>
+<div id="inputCNPJContainer">
+  <input type="text" id="inputCnpj" placeholder="Digite o CNPJ" oninput="this.value = formatarCNPJ(this.value)"
+        maxlength="18" pattern="\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}" inputmode="numeric" autocomplete="off" /> <br>
+  <button  class="btn btn-primary btn-sm"  type="button" onclick="buscarCnpj()">Buscar</button> <br><br>
+</div>
+<div id="inputNumeroSerieContainer" style="display:none;">
+  <input type="text" id="inputNumeroSerie" placeholder="Digite o Número de Série" /> <br> 
+  <button class="btn btn-primary btn-sm" type="button" onclick="buscarNumeroSerie()">Buscar</button> <br><br>
+</div>
 
-        <button class="btn btn-primary btn-sm" onclick="buscarCnpj()">Buscar</button> <br> <br>
+
+<script>
+  function mostrarInputCNPJ() {
+    document.getElementById("inputCNPJContainer").style.display = "block";
+    document.getElementById("inputNumeroSerieContainer").style.display = "none";
+  }
+  
+  function mostrarInputNumeroSerie() {
+    document.getElementById("inputCNPJContainer").style.display = "none";
+    document.getElementById("inputNumeroSerieContainer").style.display = "block";
+  }
+  
+  
+  </script>
+
+
         <table id="resultado" class="table table-striped table-bordered table-hover">
           <caption id="razaoSocialTitulo">Resultado da Busca</caption>
           <thead class="thead-dark">
@@ -80,6 +106,41 @@
     firebase.initializeApp(firebaseConfig);
 
 
+    function buscarNumeroSerie() {
+      var id_serie = document.getElementById('inputNumeroSerie').value;
+
+      // Referência para o nó 'contratos' no Firebase
+      var ref = firebase.database().ref('contratos');
+
+      // Realiza a busca com o CNPJ como filtro
+      ref.orderByChild('id_Serie').equalTo(id_serie).once('value', function (snapshot) {
+        var tbody = document.getElementById('resultado').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+
+        if (snapshot.exists()) {
+          var primeiraRazaoSocial = '';
+          snapshot.forEach(function (childSnapshot) {
+            var contrato = childSnapshot.val();
+            if (primeiraRazaoSocial === '') {
+              primeiraRazaoSocial = contrato.Nome_Fantasia;
+              document.getElementById('razaoSocialTitulo').textContent = primeiraRazaoSocial;
+            }
+
+            // Adiciona uma nova linha na tabela com os dados do contrato
+            var row = tbody.insertRow();
+            var checkboxCell = row.insertCell(0);
+            checkboxCell.innerHTML = '<input type="checkbox">';
+            var descricaoCell = row.insertCell(1);
+            descricaoCell.textContent = contrato.Descricao;
+            var idSerieCell = row.insertCell(2);
+            idSerieCell.textContent = contrato.id_Serie;
+          });
+        } else {
+          document.getElementById('razaoSocialTitulo').textContent = 'Não Encontrada';
+        }
+      });
+    }
+
 
     // Função para buscar o CNPJ no Firebase
     function buscarCnpj() {
@@ -112,10 +173,11 @@
             idSerieCell.textContent = contrato.id_Serie;
           });
         } else {
-          document.getElementById('razaoSocialTitulo').textContent = '';
+          document.getElementById('razaoSocialTitulo').textContent = 'Não encontrado';
         }
       });
     }
+
     // Função para obter os equipamentos selecionados e redirecionar para a nova página
     function exibirSelecionados() {
       var tbody = document.getElementById('resultado').getElementsByTagName('tbody')[0];
@@ -151,19 +213,7 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-    // Função para mostrar o campo CNPJ
-    function showCnpj() {
-      document.getElementById('cnpjInput').style.display = 'block';
-      document.getElementById('contratoInput').style.display = 'none';
-    }
-
-    // Função para mostrar o campo Contrato
-    function showContrato() {
-      document.getElementById('contratoInput').style.display = 'block';
-      document.getElementById('cnpjInput').style.display = 'none';
-    }
-  </script>
+  
 </body>
 
 </html>
