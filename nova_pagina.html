@@ -152,7 +152,10 @@
         firebase.database().ref('ordem').push(ordemServico)
           .then(function() {
             alert('Já recebemos sua solicitação! Resolveremos o mais breve possivel.');
-            window.open(linkWhatsapp, "_blank");
+            
+            var urlApiWhatsapp = "https://api.whatsapp.com/send?phone=5511982186670&text=" + mensagem;
+            // Abre a URL do API do WhatsApp
+            window.open(urlApiWhatsapp);
           })
           .catch(function(error) {
             console.error('Erro ao enviar a ordem de serviço:', error);
