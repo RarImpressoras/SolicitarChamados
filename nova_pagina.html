@@ -152,8 +152,7 @@
         firebase.database().ref('ordem').push(ordemServico)
           .then(function() {
             alert('Já recebemos sua solicitação! Resolveremos o mais breve possivel.');
-            
-            var urlApiWhatsapp = "https://api.whatsapp.com/send?phone=5511982186670&text=" + mensagem;
+            var urlApiWhatsapp = "https://api.whatsapp.com/send?phone=5511942162164&text=" + mensagem;
             // Abre a URL do API do WhatsApp
             window.open(urlApiWhatsapp);
           })
