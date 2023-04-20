@@ -18,27 +18,33 @@
 </head>
 <body>
     <div class="tirar">
-        empresa<input type="text" id="empresa">
-        1<input type="text" id="valor3">
-        2<input type="text" id="valor4">
+        empresa<input type="text" id="empresa1">
+        1<input type="text" id="modelo1">
+        2<input type="text" id="serie1">
         <button id="enviar2">Enviar para o WhatsApp</button>    
     </div>
 
+    <div class="tirar">
+        empresa<input type="text" id="novo">
+        1<input type="text" id="valor6">
+        2<input type="text" id="valor7">
+        <button id="enviar">Enviar para o WhatsApp</button>    
+    </div>
 <script>
 
-document.getElementById("enviar2").addEventListener("click", function() {
-    var valor3 = document.getElementById("valor3").value;
-    var valor4 = document.getElementById("valor4").value;
-    var empresa = document.getElementById("empresa").value;
-    var mensagem2 = "Estou com problema na Impressora " + valor3 + ", número de série " + valor4;
-    var texto = "empresa " + empresa + "; Numero de Serie: " + valor4 + "\n\nPara solicitar um atendimento\ntécnico, leia o QRCODE e envie\na mensagem por Whatsapp -\nacrescente o defeito do\nequipamento"; 
-    var url2 = "https://api.whatsapp.com/send?phone=5511942162164&text=" + encodeURIComponent(mensagem2);
+document.getElementById("enviar1").addEventListener("click", function() {
+    var modelo1 = document.getElementById("modelo1").value;
+    var serie1 = document.getElementById("serie1").value;
+    var empresa1 = document.getElementById("empresa1").value;
+    var mensagem1 = "Estou com problema na Impressora " + modelo1 + ", número de série " + serie1;
+    var texto1 = "empresa " + empresa1 + "; Numero de Serie: " + serie1 + "\n\nPara solicitar um atendimento\ntécnico, leia o QRCODE e envie\na mensagem por Whatsapp -\nacrescente o defeito do\nequipamento"; 
+    var url1 = "https://api.whatsapp.com/send?phone=5511942162164&text=" + encodeURIComponent(mensagem1);
     
     const qrCode2 = new QRCodeStyling({
         width: 300,
         height: 300,
         type: "svg",
-        data: url2,
+        data: url1,
         image: "https://i.ibb.co/FB7bX14/Logo-Quadrada.png",
         dotsOptions: {
             color: "#000000",
@@ -53,34 +59,63 @@ document.getElementById("enviar2").addEventListener("click", function() {
         }
     });
 
-    qrCode2.append(document.getElementById("canvas2"));
-    document.getElementById("msg2").innerText = texto;
+    qrCode2.append(document.getElementById("qr1"));
+    document.getElementById("msg1").innerText = texto;
+});
+
+
+document.getElementById("enviar").addEventListener("click", function() {
+    var valor6 = document.getElementById("valor6").value;
+    var valor7 = document.getElementById("valor7").value;
+    var novo = document.getElementById("novo").value;
+    var mensagem3 = "Estou com problema na Impressora " + valor6 + ", número de série " + valor7;
+    var texto = "empresa " + novo + "; Numero de Serie: " + valor7 + "\n\nPara solicitar um atendimento\ntécnico, leia o QRCODE e envie\na mensagem por Whatsapp -\nacrescente o defeito do\nequipamento"; 
+    var url3 = "https://api.whatsapp.com/send?phone=5511942162164&text=" + encodeURIComponent(mensagem3);
+    
+    const qrCode3 = new QRCodeStyling({
+        width: 300,
+        height: 300,
+        type: "svg",
+        data: url3,
+        image: "https://i.ibb.co/FB7bX14/Logo-Quadrada.png",
+        dotsOptions: {
+            color: "#000000",
+            type: "rounded"
+        },
+        backgroundOptions: {
+            color: "#FFFFFF",
+        },
+        imageOptions: {
+            crossOrigin: "anonymous",
+            margin: 0
+        }
+    });
+
+    qrCode3.append(document.getElementById("canvas3"));
+    document.getElementById("msg3").innerText = texto;
 });
 
 </script>
-    <div class="border border-warning">
-        <div class="row ">
-            <div class="col" id="canvas2"></div>
-        </div>
-        <div class="row ">
-            <div class="col" id="msg2"></div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-6 border border-warning">
-
-        </div>
-        <div class="col-6 border border-warning">
-
-        </div>
-        <div class="col-6 border border-warning">
-            
-        </div>
-      </div>
-
       <div class="container text-center">
         <div class="row row-cols-auto">
+          <div class="col border border-warning">
+            <div class="row ">
+                <div class="col" id="qr1"></div>
+            </div>
+            <div class="row ">
+                <div class="col" id="msg1"></div>
+            </div>
+          </div>
+          
+          <div class="col border border-warning">
+            <div class="row ">
+                <div class="col" id="canvas3"></div>
+            </div>
+            <div class="row ">
+                <div class="col" id="msg3"></div>
+            </div>
+          </div>
+
           <div class="col border border-warning">
             <div class="row ">
                 <div class="col" id="canvas2"></div>
@@ -88,12 +123,6 @@ document.getElementById("enviar2").addEventListener("click", function() {
             <div class="row ">
                 <div class="col" id="msg2"></div>
             </div>
-          </div>
-          <div class="col">
-
-          </div>
-          <div class="col">
-
           </div>
         </div>
 
