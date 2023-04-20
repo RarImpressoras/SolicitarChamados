@@ -1,27 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Exemplo de Formatação e Limite de CNPJ</title>
-    <script>
-        function formatarCNPJ(cnpj) {
-            cnpj = cnpj.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-            cnpj = cnpj.replace(/^(\d{2})(\d)/g, '$1.$2'); // Insere o primeiro ponto após os 2 primeiros dígitos
-            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/g, '$1.$2.$3'); // Insere o segundo ponto após os próximos 3 dígitos
-            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/g, '$1.$2.$3/$4'); // Insere a barra após os próximos 3 dígitos
-            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/g, '$1.$2.$3/$4-$5'); // Insere o hífen após os próximos 4 dígitos
-            return cnpj;
+    <meta charset="UTF-8">
+    <title>QR Code Styling</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <style>
+        /* Regra de estilo para remover a barra de navegação na impressão */
+        @media print {
+          .tirar {
+            display: none;
+          }
         }
-        
-        function limitarCNPJ(campo) {
-            if (campo.value.length > 18) {
-                campo.value = campo.value.slice(0, 18); // Limita o campo a 18 dígitos
-            }
-        }
-    </script>
+      </style>
+  
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 </head>
 <body>
-    <h1>Formatação e Limite de CNPJ</h1>
-    <label for="cnpj">CNPJ:</label>
-    <input type="text" id="cnpj" oninput="this.value = formatarCNPJ(this.value); limitarCNPJ(this)">
+    <div class="tirar">
+        empresa<input type="text" id="empresa">
+        1<input type="text" id="valor3">
+        2<input type="text" id="valor4">
+        <button id="enviar2">Enviar para o WhatsApp</button>    
+    </div>
+
+<script>
+
+document.getElementById("enviar2").addEventListener("click", function() {
+    var valor3 = document.getElementById("valor3").value;
+    var valor4 = document.getElementById("valor4").value;
+    var empresa = document.getElementById("empresa").value;
+    var mensagem2 = "Estou com problema na Impressora " + valor3 + ", número de série " + valor4;
+    var texto = "empresa " + empresa + "; Numero de Serie: " + valor4 + "\n\nPara solicitar um atendimento\ntécnico, leia o QRCODE e envie\na mensagem por Whatsapp -\nacrescente o defeito do\nequipamento"; 
+    var url2 = "https://api.whatsapp.com/send?phone=5511942162164&text=" + encodeURIComponent(mensagem2);
+    
+    const qrCode2 = new QRCodeStyling({
+        width: 300,
+        height: 300,
+        type: "svg",
+        data: url2,
+        image: "https://i.ibb.co/FB7bX14/Logo-Quadrada.png",
+        dotsOptions: {
+            color: "#000000",
+            type: "rounded"
+        },
+        backgroundOptions: {
+            color: "#FFFFFF",
+        },
+        imageOptions: {
+            crossOrigin: "anonymous",
+            margin: 0
+        }
+    });
+
+    qrCode2.append(document.getElementById("canvas2"));
+    document.getElementById("msg2").innerText = texto;
+});
+
+</script>
+    <div class="border border-warning">
+        <div class="row ">
+            <div class="col" id="canvas2"></div>
+        </div>
+        <div class="row ">
+            <div class="col" id="msg2"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6 border border-warning">
+
+        </div>
+        <div class="col-6 border border-warning">
+
+        </div>
+        <div class="col-6 border border-warning">
+            
+        </div>
+      </div>
+
+      <div class="container text-center">
+        <div class="row row-cols-auto">
+          <div class="col border border-warning">
+            <div class="row ">
+                <div class="col" id="canvas2"></div>
+            </div>
+            <div class="row ">
+                <div class="col" id="msg2"></div>
+            </div>
+          </div>
+          <div class="col">
+
+          </div>
+          <div class="col">
+
+          </div>
+        </div>
+
+        <div class="row row-cols-auto">
+            <div class="col">
+  
+            </div>
+            <div class="col">
+  
+            </div>
+            <div class="col">
+              
+            </div>
+        </div>
+
+        <div class="row row-cols-auto">
+            <div class="col">
+  
+            </div>
+            <div class="col">
+  
+            </div>
+            <div class="col">
+              
+            </div>
+          </div>
+
+
+      </div>
 </body>
 </html>
