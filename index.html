@@ -59,6 +59,32 @@
 
 
 <script>
+  window.onload = function() {
+    // Extrair o valor do parâmetro "serie" da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const serie = urlParams.get('serie');
+
+    // Definir o valor do elemento de entrada "inputNumeroSerie"
+    const inputNumeroSerie = document.getElementById('inputNumeroSerie');
+    inputNumeroSerie.setAttribute('value', serie);
+
+    if (serie) {
+
+      document.getElementById("inputCNPJContainer").style.display = "none";
+    document.getElementById("inputNumeroSerieContainer").style.display = "block";
+    const opcao1 = document.getElementById('buscaNumeroSerie');
+		opcao1.checked = true;
+    } else {
+      inputNumeroSerie.setAttribute('value', "");
+    document.getElementById("inputCNPJContainer").style.display = "block";
+    document.getElementById("inputNumeroSerieContainer").style.display = "none";
+			}
+
+  }
+</script>
+
+
+<script>
   function mostrarInputCNPJ() {
     document.getElementById("inputCNPJContainer").style.display = "block";
     document.getElementById("inputNumeroSerieContainer").style.display = "none";
