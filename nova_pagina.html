@@ -9,11 +9,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Meta tag para tornar a página compatível com smartphones -->
 
+    
+    <link rel="stylesheet" href="style.css">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
+
+  
+  
+  <div id="chatbox">
+    <div id="chatlog">
+      <div class="received" dir="ltr">Olá, em que posso ajudar?</div>
+    </div>
+    <div id="input-area">
+      <input type="text" id="chatinput">
+      <button id="sendbutton">Enviar</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  
+
     
   <div class="container mt-5">
     <h1 class="mb-4">Informações dos Equipamentos Selecionados</h1>
