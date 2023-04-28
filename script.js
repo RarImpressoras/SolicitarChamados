@@ -4,6 +4,16 @@ const chatlog = document.getElementById('chatlog');
 const chatinput = document.getElementById('chatinput');
 const sendbutton = document.getElementById('sendbutton');
 
+
+function toggleChat() {
+  var chatbox = document.getElementById("chatbox");
+  if (chatbox.style.display === "block") {
+    chatbox.style.display = "none";
+  } else {
+    chatbox.style.display = "block";
+  }
+}
+
 function addSentMessage(message) {
   const messageElement = document.createElement('div');
   messageElement.className = 'sent';
