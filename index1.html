@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Meta tag para tornar a página compatível com smartphones -->
+
+  <title>Selecionar Impressoras</title>
+
+  <link rel="stylesheet" href="css/bootstrap.css">
+
+
+  <script>
+    function formatarCNPJ(cnpj) {
+      cnpj = cnpj.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+      cnpj = cnpj.substring(0, 14); // Limita a quantidade de números ao necessário
+      cnpj = cnpj.replace(/^(\d{2})(\d)/g, '$1.$2'); // Insere o primeiro ponto após os 2 primeiros dígitos
+      cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/g, '$1.$2.$3'); // Insere o segundo ponto após os próximos 3 dígitos
+      cnpj = cnpj.replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/g, '$1.$2.$3/$4'); // Insere a barra após os próximos 3 dígitos
+      cnpj = cnpj.replace(/^(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/g, '$1.$2.$3/$4-$5'); // Insere o hífen após os próximos 4 dígitos
+      return cnpj;
+    }
+  </script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div  class="container mt-5">
+    <div class="row">
+      <div class="col-md-4 offset-md-4">
+        <div class="text-center mb-4">
+          <img src="img/LOGO.PNG" alt="Logo da Empresa" width="120" height="90">
+          <h3 class="mt-3">Solicitar Atendimento Técnico</h3>
+        </div>
+        <h1 id="nomeFantasiaTitulo"></h1>
+
+        <input type="radio" id="buscaCNPJ" name="opcaoBusca" value="cnpj" onclick="mostrarInputCNPJ()" checked>
+        <label for="buscaCNPJ">Busca por CNPJ</label><br>
+        <input type="radio" id="buscaNumeroSerie" name="opcaoBusca" value="numeroSerie"
+          onclick="mostrarInputNumeroSerie()">
+        <label for="buscaNumeroSerie">Busca por Número de Série</label><br>
+        <div id="inputCNPJContainer">
+          <input type="text" id="inputCnpj" placeholder="Digite o CNPJ" oninput="this.value = formatarCNPJ(this.value)"
+            maxlength="18" pattern="\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}" inputmode="numeric" autocomplete="off" /> <br>
+          <button class="btn btn-primary btn-sm" type="button" onclick="buscarCnpj()">Buscar</button> <br><br>
+        </div>
+        <div id="inputNumeroSerieContainer" style="display:none;">
+          <input type="text" id="inputNumeroSerie" placeholder="Digite o Número de Série" /> <br>
+          <button class="btn btn-primary btn-sm" type="button" onclick="buscarNumeroSerie()">Buscar</button> <br><br>
+        </div>
+
+
+        <script>
+          window.onload = function () {
+            // Extrair o valor do parâmetro "serie" da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const serie = urlParams.get('serie');
+
+            // Definir o valor do elemento de entrada "inputNumeroSerie"
+            const inputNumeroSerie = document.getElementById('inputNumeroSerie');
+            inputNumeroSerie.setAttribute('value', serie);
+
+            if (serie) {
+
+              document.getElementById("inputCNPJContainer").style.display = "none";
+              document.getElementById("inputNumeroSerieContainer").style.display = "block";
+              const opcao1 = document.getElementById('buscaNumeroSerie');
+              opcao1.checked = true;
+            } else {
+              inputNumeroSerie.setAttribute('value', "");
+              document.getElementById("inputCNPJContainer").style.display = "block";
+              document.getElementById("inputNumeroSerieContainer").style.display = "none";
+            }
+
+          }
+        </script>
+
+
+        <script>
+          function mostrarInputCNPJ() {
+            document.getElementById("inputCNPJContainer").style.display = "block";
+            document.getElementById("inputNumeroSerieContainer").style.display = "none";
+          }
+
+          function mostrarInputNumeroSerie() {
+            document.getElementById("inputCNPJContainer").style.display = "none";
+            document.getElementById("inputNumeroSerieContainer").style.display = "block";
+          }
+
+
+        </script>
+
+
+        <table id="resultado" class="table table-striped table-bordered table-hover">
+          <caption id="razaoSocialTitulo">Resultado da Busca</caption>
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Descrição</th>
+              <th>ID da Série</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-primary" onclick="exibirSelecionados()">Continuar</button>
+    </div>
+  </div>
+
+
+  <script>
+    const firebaseConfig = {
+      aapiKey: "AIzaSyCiafrD-bUZBMvGvZfqRKwA-GRLEtSLBPU",
+      authDomain: "bancorar-82457.firebaseapp.com",
+      databaseURL: "https://bancorar-82457-default-rtdb.firebaseio.com",
+      projectId: "bancorar-82457",
+      storageBucket: "bancorar-82457.appspot.com",
+      messagingSenderId: "198160041951",
+      appId: "1:198160041951:web:55289ecc1a9a544ca7666a",
+      measurementId: "G-N2NBS51NTK",
+    }
+    firebase.initializeApp(firebaseConfig);
+
+
+    function buscarNumeroSerie() {
+      var id_serie = document.getElementById('inputNumeroSerie').value;
+
+      // Referência para o nó 'contratos' no Firebase
+      var ref = firebase.database().ref('contratos');
+
+      // Realiza a busca com o CNPJ como filtro
+      ref.orderByChild('id_Serie').equalTo(id_serie).once('value', function (snapshot) {
+        var tbody = document.getElementById('resultado').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+
+        if (snapshot.exists()) {
+          var primeiraRazaoSocial = '';
+          snapshot.forEach(function (childSnapshot) {
+            var contrato = childSnapshot.val();
+            if (primeiraRazaoSocial === '') {
+              primeiraRazaoSocial = contrato.Nome_Fantasia;
+              document.getElementById('razaoSocialTitulo').textContent = primeiraRazaoSocial;
+            }
+
+            // Adiciona uma nova linha na tabela com os dados do contrato
+            var row = tbody.insertRow();
+            var checkboxCell = row.insertCell(0);
+            checkboxCell.innerHTML = '<input type="checkbox">';
+            var descricaoCell = row.insertCell(1);
+            descricaoCell.textContent = contrato.Descricao;
+            var idSerieCell = row.insertCell(2);
+            idSerieCell.textContent = contrato.id_Serie;
+          });
+        } else {
+          document.getElementById('razaoSocialTitulo').textContent = 'Não Encontrada';
+        }
+      });
+    }
+
+
+    // Função para buscar o CNPJ no Firebase
+    function buscarCnpj() {
+      var cnpj = document.getElementById('inputCnpj').value;
+
+      // Referência para o nó 'contratos' no Firebase
+      var ref = firebase.database().ref('contratos');
+
+      // Realiza a busca com o CNPJ como filtro
+      ref.orderByChild('CNPJ').equalTo(cnpj).once('value', function (snapshot) {
+        var tbody = document.getElementById('resultado').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+
+        if (snapshot.exists()) {
+          var primeiraRazaoSocial = '';
+          snapshot.forEach(function (childSnapshot) {
+            var contrato = childSnapshot.val();
+            if (primeiraRazaoSocial === '') {
+              primeiraRazaoSocial = contrato.Nome_Fantasia;
+              document.getElementById('razaoSocialTitulo').textContent = primeiraRazaoSocial;
+            }
+
+            // Adiciona uma nova linha na tabela com os dados do contrato
+            var row = tbody.insertRow();
+            var checkboxCell = row.insertCell(0);
+            checkboxCell.innerHTML = '<input type="checkbox">';
+            var descricaoCell = row.insertCell(1);
+            descricaoCell.textContent = contrato.Descricao;
+            var idSerieCell = row.insertCell(2);
+            idSerieCell.textContent = contrato.id_Serie;
+          });
+        } else {
+          document.getElementById('razaoSocialTitulo').textContent = 'Não encontrado';
+        }
+      });
+    }
+
+    // Função para obter os equipamentos selecionados e redirecionar para a nova página
+    function exibirSelecionados() {
+      var tbody = document.getElementById('resultado').getElementsByTagName('tbody')[0];
+      var checkboxes = tbody.getElementsByTagName('input');
+      var equipamentosSelecionados = [];
+
+      // Percorre os checkboxes para identificar os equipamentos selecionados
+      for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+          var row = checkboxes[i].parentNode.parentNode;
+          var descricao = row.cells[1].textContent;
+          var idSerie = row.cells[2].textContent;
+          equipamentosSelecionados.push({ descricao: descricao, idSerie: idSerie });
+        }
+      }
+
+      // Redireciona para a nova página com as informações dos equipamentos selecionados
+      if (equipamentosSelecionados.length > 0) {
+        var equipamentosJson = JSON.stringify(equipamentosSelecionados);
+        var nome = document.getElementById("razaoSocialTitulo").innerText;
+        window.location.href = 'nova_pagina.html?razaoSocialTitulo=' + encodeURIComponent(nome) +
+          '&equipamentos=' + encodeURIComponent(equipamentosJson);
+      } else {
+        alert('Nenhum equipamento selecionado.');
+      }
+    }
+  </script>
+
+
+
+
+  <!-- Incluir os arquivos de script do Bootstrap e script personalizado -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

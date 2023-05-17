@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chamados</title>
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <!-- Importando as bibliotecas do Bootstrap e Firebase -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chamados</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <!-- Importando as bibliotecas do Bootstrap e Firebase -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    
+
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
+
 <body>
-    
+
   <div class="container">
     <h1>Ordem de Chamados</h1>
     <table class="table">
       <thead>
         <tr>
+          <th>id</th>
           <th>Contrato</th>
           <th>Equipamento</th>
           <th>Tipo de Relatado</th>
@@ -57,17 +60,18 @@
     var ordemRef = firebase.database().ref('ordem');
 
     // Evento para ler os dados do nó "ordem" do Firebase Realtime Database
-    ordemRef.on('value', function(snapshot) {
+    ordemRef.on('value', function (snapshot) {
       // Limpa a tabela
       document.getElementById('tabela-ordem').innerHTML = '';
 
       // Loop através de cada registro retornado
-      snapshot.forEach(function(childSnapshot) {
+      snapshot.forEach(function (childSnapshot) {
         // Obtém os dados do registro
         var ordem = childSnapshot.val();
         var ordemKey = childSnapshot.key; // Obtém a chave do registro
 
         // Substitui "descricao" por "Modelo" e "idSerie" por "Serie"
+        console.log(ordem.equipamentosSelecionados)
         var equipamentosSelecionados = JSON.stringify(ordem.equipamentosSelecionados)
           .replace(/"descricao"/g, '"Modelo"')
           .replace(/"idSerie"/g, '"Serie"')
@@ -76,14 +80,16 @@
 
         // Cria uma nova linha na tabela com os dados formatados
         var newRow = document.createElement('tr');
-        newRow.innerHTML = '<td>' + ordem.empresa + '</td>' +
-                           '<td>' + equipamentosSelecionados + '</td>' +
-                           '<td class="font-weight-bold">' + ordem.tipoRelato + '</td>' +
-                           '<td>' + ordem.problemaRelatado + '</td>' +
-                           '<td>' + ordem.nomeSolicitante + '</td>' +
-                           '<td>' + ordem.dataHora + '</td>' +
-                           '<td><button class="btn btn-danger" onclick="excluirOrdem(\'' + ordemKey + '\')">Excluir</button></td>'; // Adicione o botão de exclus        
-                           var tabelaOrdem = document.getElementById('tabela-ordem');
+        newRow.innerHTML =
+          '<td>' + childSnapshot.key + '</td>' +
+          '<td>' + ordem.empresa + '</td>' +
+          '<td>' + equipamentosSelecionados + '</td>' +
+          '<td class="font-weight-bold">' + ordem.tipoRelato + '</td>' +
+          '<td>' + ordem.problemaRelatado + '</td>' +
+          '<td>' + ordem.nomeSolicitante + '</td>' +
+          '<td>' + ordem.dataHora + '</td>' +
+          '<td><button class="btn btn-danger" onclick="excluirOrdem(\'' + ordemKey + '\')">Excluir</button></td>'; // Adicione o botão de exclus        
+        var tabelaOrdem = document.getElementById('tabela-ordem');
         tabelaOrdem.appendChild(newRow);
       });
     });
@@ -92,13 +98,14 @@
     function excluirOrdem(ordemKey) {
       // Chama a função remove() na referência da ordem selecionada
       ordemRef.child(ordemKey).remove()
-        .then(function() {
+        .then(function () {
           console.log("Ordem excluída com sucesso!");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error("Erro ao excluir ordem:", error);
         });
     }
   </script>
 </body>
+
 </html>

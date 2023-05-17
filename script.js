@@ -97,7 +97,6 @@ sendbutton.addEventListener('click', () => {
         scrollChatLog();
       }, 1000);
     }else {
-      var mayta = "mayta"
       fetch("https://api.openai.com/v1/completions", {
         method: 'POST',
         headers: {
