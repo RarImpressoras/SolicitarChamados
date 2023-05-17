@@ -1,76 +1,56 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Solicitar ordem de Serviço</title>
-  <!-- Inclua aqui o link para o arquivo JavaScript do Firebase -->
+    <title>Formulário de Solicitação</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
 
-    <link rel="stylesheet" href="css/bootstrap.css">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Meta tag para tornar a página compatível com smartphones -->
-
-    
-    <link rel="stylesheet" href="style.css">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-    <style>
-      #chatbox {
-  position: fixed;
-  bottom: 0;
-  right: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px #888888;
-  width: 300px;
-  height: 400px;
-  display: block;
-  flex-direction: column;
-}
-
-    </style>
 </head>
+
 <body>
+    <div class="container" style="margin-top: 5%;">
+        <div class="form-container login-form">
+            <h2>Etapa 1: Equipamentos Selecionados</h2>
 
-  <div id="icon">
-    <button id="chat-icon" onclick="toggleChat()">Abrir Chat</button>
-  </div>
-  
-  
-  <div id="chatbox">
-    <div id="chatlog">
-    </div>
-    <div id="input-area">
-      <input type="text" id="chatinput">
-      <button id="sendbutton">Enviar</button>
-    </div>
-  </div>
-  <script src="script.js"></script>
-  
 
-    
-  <div class="container mt-5">
-    <h1 class="mb-4">Informações dos Equipamentos Selecionados</h1>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Descrição</th>
+                        <th>ID_Serie</th>
+                    </tr>
+                </thead>
+                <tbody id="resultado">
+                    <!-- Dados dos equipamentos selecionados serão preenchidos aqui dinamicamente -->
+                </tbody>
+            </table>
 
-    <table class="table table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th>Descrição</th>
-          <th>ID_Serie</th>
-        </tr>
-      </thead>
-      <tbody id="resultado">
-        <!-- Dados dos equipamentos selecionados serão preenchidos aqui dinamicamente -->
-      </tbody>
-    </table>
+            <button id="nextStep1" class="btn btn-primary">Avançar</button>
+            <a href="index.html"> <button class="btn2 btn-primary">Selecionar outro</button>
+            </a>
+        </div>
 
-    <form id="formulario" class="mt-5">
-                <h2 class="mb-3">Enviar Ordem de Serviço</h2>
-                <div class="form-group">
-                    <label for="nomeSolicitante">Nome do Solicitante</label>
-                    <input type="text" class="form-control" id="nomeSolicitante" required>
-                </div> <br>
+
+
+        <form id="formulario" class="mt-5">
+
+            <div class="form-group form-container login-form" style="display: none;">
+                <label for="nomeSolicitante">Nome do Solicitante</label>
+                <input type="text" class="form-control" id="nomeSolicitante" required>
+
+                <button type="button" id="nextStep2" class="btn btn-primary">Avançar</button>
+                <button type="button" id="prevStep2" class="btn2 btn-primary">Voltar</button>
+            </div>
+
+
+            <div class="form-container login-form" style="display: none;">
+
+
                 <div class="form-group">
                     <h2 class="mb-3">Selecione o Tipo de Relato</h2>
                     <select id="tipoRelato" onchange="mostrarDivRelato()">
@@ -79,133 +59,36 @@
                         <option value="Papel Atolado">Papel Atolado</option>
                         <option value="Manchando">Manchando</option>
                     </select>
-                </div> <br>
+                </div>
                 <div class="form-group" id="relato">
                     <label for="problemaRelatado">Problema Relatado</label>
                     <textarea class="form-control" id="problemaRelatado" rows="4" none></textarea>
-                </div> <br>
-                <button type="submit" class="btn btn-primary">Enviar Ordem</button>
-    </form>
-    
-  </div>
+                </div>
 
-    <script> 
-    function mostrarDivRelato() {
-        var tipoRelato = document.getElementById("tipoRelato").value;
-        var divRelato = document.getElementById("relato");
-
-        if (tipoRelato === "outros") {
-            divRelato.style.display = "block";
-        } else {
-            divRelato.style.display = "none";
-        }
-    }
-    </script>
-
-  <script>
-    const firebaseConfig = {
-      aapiKey: "AIzaSyCiafrD-bUZBMvGvZfqRKwA-GRLEtSLBPU",
-      authDomain: "bancorar-82457.firebaseapp.com",
-      databaseURL: "https://bancorar-82457-default-rtdb.firebaseio.com",
-      projectId: "bancorar-82457",
-      storageBucket: "bancorar-82457.appspot.com",
-      messagingSenderId: "198160041951",
-      appId: "1:198160041951:web:55289ecc1a9a544ca7666a",
-      measurementId: "G-N2NBS51NTK",
-    }
-    firebase.initializeApp(firebaseConfig);
-
-    // Função para obter os parâmetros da URL e exibir as informações na tabela
-    function exibirInformacoes() {
-  var queryString = window.location.search;
-  var urlParams = new URLSearchParams(queryString);
-  var modelo = urlParams.get('modelo');
-  var serie = urlParams.get('serie');
-  var empresa = urlParams.get('empresa');
+                <button id="nextStep3" type="submit" class="btn btn-primary">Enviar Ordem</button>
+                <button type="button" id="prevStep3" class="btn2 btn-primary">Voltar</button>
+            </div>
+        </form>
 
 
-  if (modelo && serie) {
-    var tbody = document.getElementById('resultado');
-    var row = document.createElement('tr');
-    var modeloCell = document.createElement('td');
-    modeloCell.textContent = modelo;
-    var serieCell = document.createElement('td');
-    serieCell.textContent = serie;
-    
-    row.appendChild(modeloCell);
-    row.appendChild(serieCell);
-    tbody.appendChild(row);
-  } else {
-    alert('Série e modelo não foram informados.');
-  }
-}
-    // Função para enviar a ordem de serviço para o Firebase
-      function enviarOrdem(event) {
-        event.preventDefault();
-        
-        var urlParams = new URLSearchParams(window.location.search);
-        var empresa = urlParams.get('empresa');
-
-        var dataHora = new Date().toLocaleString();
+        <div class="form-group form-container login-form" style="display: none;">
+            <h2>Sucesso</h2>
+            <p id="msg"></p>
+            <p id="idSolicitacao"></p>
+            <button class="btn btn-primary" id="botaoEnviarw">Confirmar no WhatsApp</button>
+        </div>
 
 
-        var nomeSolicitante = document.getElementById('nomeSolicitante').value;
-        var tipoRelato = document.getElementById('tipoRelato').value;
-        var problemaRelatado = document.getElementById('problemaRelatado').value;
-        var equipamentosSelecionados = [];
-
-        // Obtém os dados dos equipamentos selecionados da tabela
-        var rows = document.getElementById('resultado').getElementsByTagName('tr');
-        for (var i = 0; i < rows.length; i++) {
-          var descricao = rows[i].getElementsByTagName('td')[0].textContent;
-          var idSerie = rows[i].getElementsByTagName('td')[1].textContent;
-          equipamentosSelecionados.push({ descricao: descricao, idSerie: idSerie });
-        }
-
-        // Monta o objeto de ordem de serviço
-        var ordemServico = {
-          nomeSolicitante: nomeSolicitante,
-          empresa: empresa,
-          tipoRelato: tipoRelato,
-          problemaRelatado: problemaRelatado,
-          dataHora:dataHora,
-          equipamentosSelecionados: equipamentosSelecionados
-        };
-
-        var mensagem = "Olá, solicitei um atendimento pelo site:%0A" +
-                        "Empresa: " + ordemServico.empresa + "%0A" +
-                        "Tipo de Relato: " + ordemServico.tipoRelato + "%0A" +
-                        "Problema Relatado: " + ordemServico.problemaRelatado;
-
-                    // Link do WhatsApp com a mensagem formatada e o número de telefone
-                    var linkWhatsapp = "https://wa.me/5511942162164?text=" + mensagem;
-
-                    // Abre o link do WhatsApp em uma nova janela
-
-
-        // Envia a ordem de serviço para o Firebase
-        firebase.database().ref('ordem').push(ordemServico)
-          .then(function() {
-            alert('Já recebemos sua solicitação! Resolveremos o mais breve possivel.');
-            var urlApiWhatsapp = "https://api.whatsapp.com/send?phone=5511942162164&text=" + mensagem;
-            // Abre a URL do API do WhatsApp
-            window.open(urlApiWhatsapp);
-          })
-          .catch(function(error) {
-            console.error('Erro ao enviar a ordem de serviço:', error);
-          });
-
-
-
-        // Limpa o formulário
-        document.getElementById('formulario').reset(); 
-      }
-
-      // Chama a função para exibir as informações dos equipamentos selecionados
-      exibirInformacoes();
-
-      // Adiciona o evento de submit no formulário
-      document.getElementById('formulario').addEventListener('submit', enviarOrdem);
-    </script>
+        <div class="progress">
+            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+        </div>
+    </div>
+    </div>
+    <script src="js/EnviarChamado2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="js/criarChamado.js"></script>
 </body>
+
 </html>
