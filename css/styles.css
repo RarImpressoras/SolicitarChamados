@@ -1,12 +1,12 @@
 body {
-  background-color: #000;
+  background-color: #ffffff;
 }
 
 .login-form {
   padding: 30px;
   border-radius: 5px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-  background-color: #222;
+  background-color: #ff5225;
   position: relative; /* Adicionado */
 }
 
@@ -53,12 +53,15 @@ h2 {
 .btn {
   font-size: 16px;
   font-weight: bold;
-  background-color: #ff8c00;
+  background-color: #ffffff;
   border: none;
   border-radius: 20px;
   padding: 10px 30px;
-  color: #fff;
+  color: #ff5225;
   transition: background-color 0.3s;
+}
+caption{
+  color: white;
 }
 .btn2 {
   font-size: 16px;
